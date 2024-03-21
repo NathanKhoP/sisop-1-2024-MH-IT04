@@ -1,4 +1,4 @@
-1. Mengambil Customer Name dengan Sales tertinggi
+a. Mengambil Customer Name dengan Sales tertinggi
 ```bash 
 awk -F, '{print $17, $6}' sandbox.csv | sort -nr | head -n 1
 ```
