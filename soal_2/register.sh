@@ -7,7 +7,7 @@ ask_register() {
     if grep -q "^$email:.*:.*:.*:.*" users.txt;
     then
         echo -e "\nEmail already exists. Please choose a different one."
-        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> log.txt
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
         return 1
     fi
 
@@ -39,7 +39,7 @@ ask_register() {
 
     echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
     echo -e "\nRegistration successful\n"
-    echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> log.txt
+    echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> auth.log
 }
 
 ask_register
