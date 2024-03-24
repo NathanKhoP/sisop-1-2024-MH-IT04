@@ -14,21 +14,21 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "=== Download successful ==="
-printf "\n"
+echo -e "\n"
 
 # Customer with the Most Sales
 echo "=== Customer with the Most Sales ==="
-awk -F, '{print $17, $6}' sandbox.csv | sort -nr | head -n 1 | awk '{print $2, $3}'
+awk -F, '{print $17, $6}' sandbox.csv | sort -nr | head -n 1 | awk '{print $2, $3, "dengan sales:", $1}'
 echo -e "\n"
 
 # Customer Segment with the Least Profit
 echo "=== Customer Segment with the Least Profit ==="
-awk -F, '{print $20, $7}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
+awk -F, '{print $20, $7}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3, "dengan profit:", $1}'
 echo -e "\n"
 
 # Categories with the Most Total Profit
-echo "=== Categories with Most Total Profit ==="
-awk -F, '{profit[$14] += $20} END {for (category in profit) print profit[category], category}' sandbox.csv | sort -nr | head -n 3
+echo "=== Categories with the Most Total Profit ==="
+awk -F, '{profit[$14] += $20} END {for (category in profit) print profit[category], category}' sandbox.csv | sort -nr | head -n 3 | awk '{print $2, "dengan profit:", $1}'
 echo -e "\n"
 
 # Get Quantity and Order Date for Customer with "Adriaens"

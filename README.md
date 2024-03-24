@@ -12,6 +12,9 @@ Cipung dan abe ingin mendirikan sebuah toko bernama “SandBox”, sedangkan kam
 
 Setiap tahun Cipung dan Abe akan mengadakan rapat dengan kamu untuk mengetahui laporan dan strategi penjualan dari “SandBox”. Buatlah beberapa kesimpulan dari data penjualan “Sandbox.csv” untuk diberikan ke cipung dan abe 
 
+## Keterangan
+   - `echo -e "\n"` digunakan untuk print new line
+   - `|` pipe operator digunakan untuk memasukkan input dari command sebelumnya
 
 ## Pengaturan Awal
 
@@ -86,7 +89,6 @@ Bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipili
 ```bash
 # Categories with Most Total Profit
 echo "=== Categories with Most Total Profit ==="
-awk -F, '{profit[$14] += $20} END {for (category in profit) print "Profit:", profit[category],"| Category:", category}' sandbox.csv | sort -nr | head -n 3
 awk -F, '{profit[$14] += $20} END {for (category in profit) print profit[category], category}' sandbox.csv | sort -nr | head -n 3
 echo -e "\n"
 ```
