@@ -70,21 +70,15 @@ Dalam bagian ini:
 - `head -n 1` digunakan untuk mendapatkan baris pertama (yaitu yang memiliki penjualan terbanyak).
 - `awk '{print $2, $3}'` digunakan untuk mencetak first name (`$2`) dan last name (`$3`) dari Customer Name. 
 
-### Pelanggan dengan Profit Terkecil dan Terbesar
+### Segmen Pelanggan dengan Profit Terkecil
 
 ```bash
-# Customer with the Least Profit
-echo "=== Customer with the Least Profit ==="
-awk -F, '{print $20, $6}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
-echo -e "\n"
-
-# Customer with the Most Profit
-echo "=== Customer with the Most Profit ==="
-awk -F, '{print $20, $6}' sandbox.csv | sort -nr | head -n 1 | awk '{print $2, $3}'
+# Customer Segment with the Least Profit
+echo "=== Customer Segment with the Least Profit ==="
+awk -F, '{print $20, $7}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
 echo -e "\n"
 ```
-
-Kedua bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipilih adalah kolom ke-20 (Profit).
+Bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipilih adalah kolom ke-20 (Profit) dan kolom ke-7 (Customer Segment) dan menggunakan default `sort` untuk mengurutkan profit dari terkecil.
 
 
 ### Kategori dengan Total Profit Tertinggi
