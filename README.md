@@ -69,7 +69,7 @@ echo -e "\n"
 
 Dalam bagian ini:
 - `awk -F, '{print $17, $6}' sandbox.csv` digunakan untuk memilih kolom 17 (Sales) dan kolom 6 (Customer Name).
-- `sort -nr` digunakan untuk mengurutkan hasil secara numerik secara terbalik (dari yang terbesar ke yang terkecil).
+- `sort -nr` digunakan untuk mengurutkan hasil secara numerik terkecil (`-n`) secara terbalik (`-r`)(dari yang terbesar ke yang terkecil).
 - `head -n 1` digunakan untuk mendapatkan baris pertama (yaitu yang memiliki penjualan terbanyak).
 - `awk '{print $2, $3}'` digunakan untuk mencetak first name (`$2`) dan last name (`$3`) dari Customer Name. 
 
@@ -102,7 +102,7 @@ echo -e "\n"
    - `sandbox.csv` adalah nama file CSV yang digunakan sebagai input.
 
 2. `sort -nr | head -n 3`
-   - `sort -nr` digunakan untuk mengurutkan hasil secara numerik secara terbalik (dari yang tertinggi ke terendah).
+   - `sort -nr` digunakan untuk mengurutkan hasil secara numerik terkecil (`-n`) secara terbalik (`-r`)(dari yang tertinggi ke terendah).
    - `head -n 3` digunakan untuk mendapatkan tiga baris pertama dari hasil yang sudah diurutkan, yang akan memberikan tiga kategori dengan total profit tertinggi.
 
 
