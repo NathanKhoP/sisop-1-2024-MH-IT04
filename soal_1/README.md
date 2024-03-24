@@ -71,8 +71,8 @@ Dalam bagian ini:
 echo "=== Customer Segment with the Least Profit ==="
 awk -F, '{print $20, $7}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
 echo -e "\n"
-
-Kedua bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipilih adalah kolom ke-20 (Profit) dan kolom ke-7 (Customer Segment).
+```
+Bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipilih adalah kolom ke-20 (Profit) dan kolom ke-7 (Customer Segment) dan menggunakan default `sort` untuk mengurutkan profit dari terkecil.
 
 
 ### Kategori dengan Total Profit Tertinggi
