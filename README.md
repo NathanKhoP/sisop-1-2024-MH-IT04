@@ -607,12 +607,6 @@ ask_register() {
 }
 
 ask_register
-
-
-# date + "%y/%m/%d %H:%M:%S"
-}
-
-ask_register
 ```
 
 **2. login.sh**
