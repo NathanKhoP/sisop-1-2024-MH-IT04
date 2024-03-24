@@ -156,6 +156,7 @@ Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lai
   
   Mengetahui informasi ini, hal pertama yang saya lakukan yaitu saya membuat fungsi bernama ask_register yang berisi commands untuk input parameter-parameter diatas.
 
+    ```bash
     ask_register() {
         echo -e "Welcome to the registration page.\n"
 
@@ -177,6 +178,7 @@ Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lai
         echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
         echo -e "\nRegistration successful\n"
     }
+    ```
 
 2. login.sh
 
@@ -188,6 +190,7 @@ Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lai
 
 Karena email unique tetapi username tidak, maka saya menambahkan sebuah if statement untuk mengecek apakah email yang diinput sudah terdaftar di register.sh dengan cara penggunaan grep, command sub dan wildcard (-q untuk melakukan suppress output)
 
+    ```bash
     add_user() {
         echo "Enter user email:"
         read email
@@ -214,6 +217,7 @@ Karena email unique tetapi username tidak, maka saya menambahkan sebuah if state
         echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
         echo -e "\nRegistration successful\n"
     }
+    ```
 
 > d. Karena resep bom atom ini sangat rahasia Oppie ingin password nya memuat keamanan tingkat tinggi
 > - Password tersebut harus di encrypt menggunakan base64
@@ -225,6 +229,7 @@ Karena email unique tetapi username tidak, maka saya menambahkan sebuah if state
 
 Mengetahui tambahan constraints yang diberikan oleh sub nomor d, maka saya menambahkan beberapa mekanisme untuk setiap constraint.
 
+    ```bash
     ask_register() {
         echo -e "Welcome to the registration page.\n"
 
@@ -268,6 +273,7 @@ Mengetahui tambahan constraints yang diberikan oleh sub nomor d, maka saya menam
         echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
         echo -e "\nRegistration successful\n"
     }
+    ```
 
 Constraint pertama : base64 encryption dengan command base64
 
@@ -297,6 +303,7 @@ f. Setelah melakukan register, program harus bisa melakukan login. Login hanya p
 
 Saya bisa beralih dari register.sh dan mulai untuk mengerjakan login.sh sekarang karena saya sudah mengetahui parameter yang diperlukan untuk login. Sama seperti register.sh saya membuat fungsi ask_login yang meminta input email dan password.
 
+    ```bash
     ask_login () {
         echo "Enter your email:"
         read email
@@ -322,6 +329,7 @@ Saya bisa beralih dari register.sh dan mulai untuk mengerjakan login.sh sekarang
             fi
         fi
     }
+    ```
 
 Karena ada prompt dimana semua email yang mengandung kata admin menjadi admin, maka saya membuat dua if, dimana yang pertama sekaligus mengecek apakah ada kata admin di email yang diinput, jika tidak ada, akan mengecek users.txt untuk suatu kecocokan.
 
@@ -329,6 +337,7 @@ Karena ada prompt dimana semua email yang mengandung kata admin menjadi admin, m
 
 Untuk masalah ini, saya membuat fungsi baru yaitu welcome dimana ada 2 opsi sesuai soal, Login dan Forgot Password dengan switch case.
 
+    ```bash
     welcome () {
         echo "Welcome to the login page. Please select an option:"
         echo "1. Login"
@@ -342,9 +351,11 @@ Untuk masalah ini, saya membuat fungsi baru yaitu welcome dimana ada 2 opsi sesu
         *) echo "Invalid choice" ;;
         esac
     }
+    ```
 
 Setelah ini, saya melanjutkan dengan membuat fungsi baru lagi yaitu ask_forgot untuk opsi forgot password, dengan parameter yang keluar yaitu email, security q&a, dan password baru.
 
+    ```bash
     ask_forgot () {
         echo "Enter your email:"
         read email
@@ -372,6 +383,7 @@ Setelah ini, saya melanjutkan dengan membuat fungsi baru lagi yaitu ask_forgot u
             fi
         fi
     }
+    ```
 
 Untuk fungsi ask_forgot, sesuai yang diminta soal, user menginputkan email dan setelah itu dengan grep dan cut, saya bisa mengambil security question yang sesuai dengan email yang diinputkan oleh user. Kemudian saya membuat if statement sesuai input dari security question answer.
 
@@ -388,6 +400,7 @@ Mengetahui hal ini, saya membuat beberapa fungsi baru, dengan skema sebagai beri
 
 Fungsi admin dan member akan dijalankan sesuai if statement pada login.
     
+    ```bash
     if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
     then    
         echo -e "\nLogin successful\n"
@@ -402,9 +415,11 @@ Fungsi admin dan member akan dijalankan sesuai if statement pada login.
         echo -e "\nPassword is incorrect. Please enter the correct password."
         return 1  
     fi
+    ```
 
 Kemudian, untuk admin, sesuai skema, akan diberikan 3 option (+1 untuk exit), sehingga mirip seperti fungsi welcome pada awal program.
 
+    ```bash
     admin () {
         echo "Welcome! You currently have admin privileges."
         while true; do
@@ -429,9 +444,11 @@ Kemudian, untuk admin, sesuai skema, akan diberikan 3 option (+1 untuk exit), se
             esac
         done
     }
+    ```
 
 Masuk kedalam fungsi-fungsi khusus admin, ada add_user, edit_user, dan delete_user. Untuk add_user sistemnya mirip dengan register user baru.
 
+    ```bash
     add_user() {
         echo "Enter user email:"
         read email
@@ -467,9 +484,11 @@ Masuk kedalam fungsi-fungsi khusus admin, ada add_user, edit_user, dan delete_us
     delete_code() {
 
     }
+    ```
 
 > i. Ketika admin ingin melakukan edit atau hapus user, maka akan keluar input email untuk identifikasi user yang akan di hapus atau di edit
 
+    ```bash
     edit_user () {
         echo "Enter user email:"
         read email
@@ -513,6 +532,7 @@ Masuk kedalam fungsi-fungsi khusus admin, ada add_user, edit_user, dan delete_us
             echo -e "\nDelete successful\n"
         fi
     }
+    ```
 
 Dalam fungsi edit_user dan delete_user, terdapat penggunaan command sed untuk melakukan edit pada file users.txt, dimana di edit_user, sed bekerja untuk mengganti value lama dengan value baru, sedangkan di delete_user, sed akan menghapus line yang berkaitan dengan email yang diinput. Pemakaian sed dilakukan karena operasi yang dijalankan tidak terlalu sulit, sehingga sed sudah cukup, tidak perlu memakai awk.
 
@@ -533,6 +553,7 @@ Untuk sub nomor ini, diperlukan tambahan echo untuk melakukan logging pada fungs
 
 **1. register.sh**
    
+    ```bash
     ask_register() {
         echo -e "Welcome to the registration page.\n"
 
@@ -578,9 +599,11 @@ Untuk sub nomor ini, diperlukan tambahan echo untuk melakukan logging pada fungs
     }
 
     ask_register
+    ```
 
 **2. login.sh**
 
+    ```bash
     add_user() {
         echo "Enter user email:"
         read email
@@ -769,6 +792,7 @@ Untuk sub nomor ini, diperlukan tambahan echo untuk melakukan logging pada fungs
     }
 
     welcome
+    ```
 ---
 
 # Soal 3
