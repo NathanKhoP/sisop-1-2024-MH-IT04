@@ -73,7 +73,6 @@ echo -e "\n"
 
 Kedua bagian ini hampir sama dengan bagian sebelumnya, tapi kali ini kolom yang dipilih adalah kolom ke-20 (Profit).
 
-Mari saya jelaskan bagian tersebut lebih rinci:
 
 ### Kategori dengan Total Profit Tertinggi
 
