@@ -156,29 +156,29 @@ Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lai
   
   Mengetahui informasi ini, hal pertama yang saya lakukan yaitu saya membuat fungsi bernama ask_register yang berisi commands untuk input parameter-parameter diatas.
 
-    ```bash
-    ask_register() {
-        echo -e "Welcome to the registration page.\n"
+```bash
+ask_register() {
+    echo -e "Welcome to the registration page.\n"
 
-        echo "Enter your email:"
-        read email
+    echo "Enter your email:"
+    read email
 
-        echo "Enter your username:"
-        read usr
+    echo "Enter your username:"
+    read usr
 
-        echo "Enter a security question, something you will always know:"
-        read sec_q
-        
-        echo "Enter the answer to your security question:"
-        read sec_a
+    echo "Enter a security question, something you will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
 
-        echo "Enter password:"
-        read -s pass
+    echo "Enter password:"
+    read -s pass
 
-        echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-    }
-    ```
+    echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+}
+```
 
 2. login.sh
 
@@ -190,34 +190,34 @@ Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lai
 
 Karena email unique tetapi username tidak, maka saya menambahkan sebuah if statement untuk mengecek apakah email yang diinput sudah terdaftar di register.sh dengan cara penggunaan grep, command sub dan wildcard (-q untuk melakukan suppress output)
 
-    ```bash
-    add_user() {
-        echo "Enter user email:"
-        read email
-        
-        # ADDED
-        if grep -q "^$email:.*:.*:.*:.*" users.txt; 
-        then
-            echo -e "\nEmail already exists. Please choose a different one."
-            return 1
-        fi
+```bash
+add_user() {
+    echo "Enter user email:"
+    read email
+    
+    # ADDED
+    if grep -q "^$email:.*:.*:.*:.*" users.txt; 
+    then
+        echo -e "\nEmail already exists. Please choose a different one."
+        return 1
+    fi
 
-        echo "Enter user username:"
-        read usr
+    echo "Enter user username:"
+    read usr
 
-        echo "Enter a security question, something the user will always know:"
-        read sec_q
-        
-        echo "Enter the answer to your security question:"
-        read sec_a
+    echo "Enter a security question, something the user will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
 
-        echo "Enter user password:"
-        read -s pass
+    echo "Enter user password:"
+    read -s pass
 
-        echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-    }
-    ```
+    echo "$email:$usr:$sec_q:$sec_a:$pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+}
+```
 
 > d. Karena resep bom atom ini sangat rahasia Oppie ingin password nya memuat keamanan tingkat tinggi
 > - Password tersebut harus di encrypt menggunakan base64
@@ -229,51 +229,51 @@ Karena email unique tetapi username tidak, maka saya menambahkan sebuah if state
 
 Mengetahui tambahan constraints yang diberikan oleh sub nomor d, maka saya menambahkan beberapa mekanisme untuk setiap constraint.
 
-    ```bash
-    ask_register() {
-        echo -e "Welcome to the registration page.\n"
+```bash
+ask_register() {
+    echo -e "Welcome to the registration page.\n"
 
-        echo "Enter your email:"
-        read email
+    echo "Enter your email:"
+    read email
 
-        if grep -q "^$email:.*:.*:.*:.*" users.txt;
-        then
-            echo -e "\nEmail already exists. Please choose a different one."
-            return 1
+    if grep -q "^$email:.*:.*:.*:.*" users.txt;
+    then
+        echo -e "\nEmail already exists. Please choose a different one."
+        return 1
+    fi
+
+    echo "Enter your username:"
+    read usr
+
+    echo "Enter a security question, something you will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
+
+    echo "Enter password:"
+    read -s pass
+
+    # ADDED
+    while true; do
+        # check more than 8 chars, has at least a capital and a normal letter, has at least a number
+        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
+            echo "Password meets all requirements"
+            break
+        else
+            echo "Password does not meet the requirements"
+            echo "Enter password:"
+            read -s pass
         fi
+    done
 
-        echo "Enter your username:"
-        read usr
+    # ADDED base64 encryption
+    enc_pass=$(echo $pass | base64)
 
-        echo "Enter a security question, something you will always know:"
-        read sec_q
-        
-        echo "Enter the answer to your security question:"
-        read sec_a
-
-        echo "Enter password:"
-        read -s pass
-
-        # ADDED
-        while true; do
-            # check more than 8 chars, has at least a capital and a normal letter, has at least a number
-            if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
-                echo "Password meets all requirements"
-                break
-            else
-                echo "Password does not meet the requirements"
-                echo "Enter password:"
-                read -s pass
-            fi
-        done
-
-        # ADDED base64 encryption
-        enc_pass=$(echo $pass | base64)
-
-        echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-    }
-    ```
+    echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+}
+```
 
 Constraint pertama : base64 encryption dengan command base64
 
@@ -303,33 +303,33 @@ f. Setelah melakukan register, program harus bisa melakukan login. Login hanya p
 
 Saya bisa beralih dari register.sh dan mulai untuk mengerjakan login.sh sekarang karena saya sudah mengetahui parameter yang diperlukan untuk login. Sama seperti register.sh saya membuat fungsi ask_login yang meminta input email dan password.
 
-    ```bash
-    ask_login () {
-        echo "Enter your email:"
-        read email
+```bash
+ask_login () {
+    echo "Enter your email:"
+    read email
 
-        if ! grep -q "^$email:" users.txt;
-        then    
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
+    if ! grep -q "^$email:" users.txt;
+    then    
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        echo "Enter password:"
+        read -s pass
+        enc_pass=$(echo $pass | base64)
+
+        if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
+        then
+            echo -e "\nLogin successful\n"
+        elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
+        then
+            echo -e "\nLogin successful\n"
         else
-            echo "Enter password:"
-            read -s pass
-            enc_pass=$(echo $pass | base64)
-
-            if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
-            then
-                echo -e "\nLogin successful\n"
-            elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
-            then
-                echo -e "\nLogin successful\n"
-            else
-                echo -e "\nPassword is incorrect. Please enter the correct password."
-                return 1  
-            fi
+            echo -e "\nPassword is incorrect. Please enter the correct password."
+            return 1  
         fi
-    }
-    ```
+    fi
+}
+```
 
 Karena ada prompt dimana semua email yang mengandung kata admin menjadi admin, maka saya membuat dua if, dimana yang pertama sekaligus mengecek apakah ada kata admin di email yang diinput, jika tidak ada, akan mengecek users.txt untuk suatu kecocokan.
 
@@ -337,53 +337,53 @@ Karena ada prompt dimana semua email yang mengandung kata admin menjadi admin, m
 
 Untuk masalah ini, saya membuat fungsi baru yaitu welcome dimana ada 2 opsi sesuai soal, Login dan Forgot Password dengan switch case.
 
-    ```bash
-    welcome () {
-        echo "Welcome to the login page. Please select an option:"
-        echo "1. Login"
-        echo "2. Forgot Password"
-        echo "Choose an option: "
-        read choice
+```bash
+welcome () {
+    echo "Welcome to the login page. Please select an option:"
+    echo "1. Login"
+    echo "2. Forgot Password"
+    echo "Choose an option: "
+    read choice
 
-        case $choice in
-        1) ask_login ;;
-        2) ask_forgot ;;
-        *) echo "Invalid choice" ;;
-        esac
-    }
-    ```
+    case $choice in
+    1) ask_login ;;
+    2) ask_forgot ;;
+    *) echo "Invalid choice" ;;
+    esac
+}
+```
 
 Setelah ini, saya melanjutkan dengan membuat fungsi baru lagi yaitu ask_forgot untuk opsi forgot password, dengan parameter yang keluar yaitu email, security q&a, dan password baru.
 
-    ```bash
-    ask_forgot () {
-        echo "Enter your email:"
-        read email
+```bash
+ask_forgot () {
+    echo "Enter your email:"
+    read email
 
-        if ! grep -q "^$email:" users.txt;
+    if ! grep -q "^$email:" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        # grep the correct sec_q and _a from email
+        sec_q=$(grep "^$email:" users.txt | cut -d':' -f3)
+        echo "Security question: $sec_q"
+
+        echo "Enter your answer:"
+        read sec_a
+
+        if ! grep -q "^$email:.*:.*:$sec_a" users.txt;
         then
-            echo -e "\nEmail not found. Please enter a valid email."
+            echo -e "\nAnswer is incorrect. Please enter the correct answer."
             return 1
         else
-            # grep the correct sec_q and _a from email
-            sec_q=$(grep "^$email:" users.txt | cut -d':' -f3)
-            echo "Security question: $sec_q"
-
-            echo "Enter your answer:"
-            read sec_a
-
-            if ! grep -q "^$email:.*:.*:$sec_a" users.txt;
-            then
-                echo -e "\nAnswer is incorrect. Please enter the correct answer."
-                return 1
-            else
-                enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
-                pass = $(echo $enc_pass | base64 -d)
-                echo -e "\nYour password is: $pass\n"
-            fi
+            enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
+            pass = $(echo $enc_pass | base64 -d)
+            echo -e "\nYour password is: $pass\n"
         fi
-    }
-    ```
+    fi
+}
+```
 
 Untuk fungsi ask_forgot, sesuai yang diminta soal, user menginputkan email dan setelah itu dengan grep dan cut, saya bisa mengambil security question yang sesuai dengan email yang diinputkan oleh user. Kemudian saya membuat if statement sesuai input dari security question answer.
 
@@ -400,139 +400,139 @@ Mengetahui hal ini, saya membuat beberapa fungsi baru, dengan skema sebagai beri
 
 Fungsi admin dan member akan dijalankan sesuai if statement pada login.
     
-    ```bash
-    if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
-    then    
-        echo -e "\nLogin successful\n"
-        # ADDED
-        admin
-    elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
-    then
-        echo -e "\nLogin successful\n"
-        # ADDED
-        member
-    else
-        echo -e "\nPassword is incorrect. Please enter the correct password."
-        return 1  
-    fi
-    ```
+```bash
+if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
+then    
+    echo -e "\nLogin successful\n"
+    # ADDED
+    admin
+elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
+then
+    echo -e "\nLogin successful\n"
+    # ADDED
+    member
+else
+    echo -e "\nPassword is incorrect. Please enter the correct password."
+    return 1  
+fi
+```
 
 Kemudian, untuk admin, sesuai skema, akan diberikan 3 option (+1 untuk exit), sehingga mirip seperti fungsi welcome pada awal program.
 
-    ```bash
-    admin () {
-        echo "Welcome! You currently have admin privileges."
-        while true; do
-            echo "Admin Menu"
-            echo "1. Add User"
-            echo "2. Edit User"
-            echo "3. Delete User"
-            echo -e "4. Exit \n"
-            
-            echo "Choose an option: "
-            read choice
+```bash
+admin () {
+    echo "Welcome! You currently have admin privileges."
+    while true; do
+        echo "Admin Menu"
+        echo "1. Add User"
+        echo "2. Edit User"
+        echo "3. Delete User"
+        echo -e "4. Exit \n"
+        
+        echo "Choose an option: "
+        read choice
 
-            case $choice in
-            1) add_user ;;
-            2) edit_user ;;
-            3) delete_user ;;
-            4) 
-                echo "Exiting..."
-                break
-                ;;
-            *) echo "Invalid choice" ;;
-            esac
-        done
-    }
-    ```
+        case $choice in
+        1) add_user ;;
+        2) edit_user ;;
+        3) delete_user ;;
+        4) 
+            echo "Exiting..."
+            break
+            ;;
+        *) echo "Invalid choice" ;;
+        esac
+    done
+}
+```
 
 Masuk kedalam fungsi-fungsi khusus admin, ada add_user, edit_user, dan delete_user. Untuk add_user sistemnya mirip dengan register user baru.
 
-    ```bash
-    add_user() {
-        echo "Enter user email:"
-        read email
+```bash
+add_user() {
+    echo "Enter user email:"
+    read email
 
-        if grep -q "^$email:.*:.*:.*:.*" users.txt; 
-        then
-            echo -e "\nEmail already exists. Please choose a different one."
-            return 1
-        fi
+    if grep -q "^$email:.*:.*:.*:.*" users.txt; 
+    then
+        echo -e "\nEmail already exists. Please choose a different one."
+        return 1
+    fi
 
-        echo "Enter user username:"
-        read usr
+    echo "Enter user username:"
+    read usr
 
-        echo "Enter a security question, something the user will always know:"
-        read sec_q
-        
-        echo "Enter the answer to your security question:"
-        read sec_a
+    echo "Enter a security question, something the user will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
 
-        echo "Enter user password:"
-        read -s pass
+    echo "Enter user password:"
+    read -s pass
 
-        enc_pass=$(echo $pass | base64)
+    enc_pass=$(echo $pass | base64)
 
-        echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-    }
+    echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+}
 
-    edit_user() {
+edit_user() {
 
-    }
+}
 
-    delete_code() {
+delete_code() {
 
-    }
-    ```
+}
+```
 
 > i. Ketika admin ingin melakukan edit atau hapus user, maka akan keluar input email untuk identifikasi user yang akan di hapus atau di edit
 
-    ```bash
-    edit_user () {
-        echo "Enter user email:"
-        read email
+```bash
+edit_user () {
+    echo "Enter user email:"
+    read email
 
-        if ! grep -q "^$email:.*:.*:.*:.*" users.txt;
-        then
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            echo "Enter new username:"
-            read new_usr
+    if ! grep -q "^$email:.*:.*:.*:.*" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        echo "Enter new username:"
+        read new_usr
 
-            echo "Enter new security question:"
-            read new_sec_q
+        echo "Enter new security question:"
+        read new_sec_q
 
-            echo "Enter new security answer:"
-            read new_sec_a
+        echo "Enter new security answer:"
+        read new_sec_a
 
-            echo "Enter new password:"
-            read -s new_pass
-            
-            newenc_pass=$(echo $new_pass | base64)
+        echo "Enter new password:"
+        read -s new_pass
+        
+        newenc_pass=$(echo $new_pass | base64)
 
-            # replace the existing line with the new values
-            sed -i "/^$email:/c\\$email:$new_usr:$new_sec_q:$new_sec_a:$newenc_pass" users.txt
-            echo -e "\nEdit successful\n"
-        fi
-    }
+        # replace the existing line with the new values
+        sed -i "/^$email:/c\\$email:$new_usr:$new_sec_q:$new_sec_a:$newenc_pass" users.txt
+        echo -e "\nEdit successful\n"
+    fi
+}
 
-    delete_user () {
-        echo "Enter user email:"
-        read email
+delete_user () {
+    echo "Enter user email:"
+    read email
 
-        if ! grep -q "^$email:" users.txt;
-        then
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            # delete the line
-            sed -i "/^$email:/d" users.txt
-            echo -e "\nDelete successful\n"
-        fi
-    }
-    ```
+    if ! grep -q "^$email:" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        # delete the line
+        sed -i "/^$email:/d" users.txt
+        echo -e "\nDelete successful\n"
+    fi
+}
+```
 
 Dalam fungsi edit_user dan delete_user, terdapat penggunaan command sed untuk melakukan edit pada file users.txt, dimana di edit_user, sed bekerja untuk mengganti value lama dengan value baru, sedangkan di delete_user, sed akan menghapus line yang berkaitan dengan email yang diinput. Pemakaian sed dilakukan karena operasi yang dijalankan tidak terlalu sulit, sehingga sed sudah cukup, tidak perlu memakai awk.
 
@@ -553,246 +553,246 @@ Untuk sub nomor ini, diperlukan tambahan echo untuk melakukan logging pada fungs
 
 **1. register.sh**
    
-    ```bash
-    ask_register() {
-        echo -e "Welcome to the registration page.\n"
+```bash
+ask_register() {
+    echo -e "Welcome to the registration page.\n"
 
-        echo "Enter your email:"
-        read email
+    echo "Enter your email:"
+    read email
 
-        if grep -q "^$email:.*:.*:.*:.*" users.txt;
-        then
-            echo -e "\nEmail already exists. Please choose a different one."
-            echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
-            return 1
+    if grep -q "^$email:.*:.*:.*:.*" users.txt;
+    then
+        echo -e "\nEmail already exists. Please choose a different one."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
+        return 1
+    fi
+
+    echo "Enter your username:"
+    read usr
+
+    echo "Enter a security question, something you will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
+
+    echo "Enter password:"
+    read -s pass
+    while true; do
+        # check more than 8 chars, has at least a capital and a normal letter, has at least a number
+        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
+            echo "Password meets all requirements"
+            break
+        else
+            echo "Password does not meet the requirements"
+            echo "Enter password:"
+            read -s pass
         fi
+    done
 
-        echo "Enter your username:"
-        read usr
+    # Add base64 encryption
+    enc_pass=$(echo $pass | base64)
 
-        echo "Enter a security question, something you will always know:"
-        read sec_q
-        
-        echo "Enter the answer to your security question:"
-        read sec_a
+    echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+    echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> auth.log
+}
 
-        echo "Enter password:"
-        read -s pass
-        while true; do
-            # check more than 8 chars, has at least a capital and a normal letter, has at least a number
-            if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
-                echo "Password meets all requirements"
-                break
-            else
-                echo "Password does not meet the requirements"
-                echo "Enter password:"
-                read -s pass
-            fi
-        done
-
-        # Add base64 encryption
-        enc_pass=$(echo $pass | base64)
-
-        echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> auth.log
-    }
-
-    ask_register
-    ```
+ask_register
+```
 
 **2. login.sh**
 
-    ```bash
-    add_user() {
-        echo "Enter user email:"
-        read email
+```bash
+add_user() {
+    echo "Enter user email:"
+    read email
 
-        if grep -q "^$email:.*:.*:.*:.*" users.txt; 
-        then
-            echo -e "\nEmail already exists. Please choose a different one."
-            echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
-            return 1
-        fi
+    if grep -q "^$email:.*:.*:.*:.*" users.txt; 
+    then
+        echo -e "\nEmail already exists. Please choose a different one."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
+        return 1
+    fi
 
-        echo "Enter user username:"
-        read usr
+    echo "Enter user username:"
+    read usr
 
-        echo "Enter a security question, something the user will always know:"
-        read sec_q
+    echo "Enter a security question, something the user will always know:"
+    read sec_q
+    
+    echo "Enter the answer to your security question:"
+    read sec_a
+
+    echo "Enter user password:"
+    read -s pass
+
+    enc_pass=$(echo $pass | base64)
+
+    echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
+    echo -e "\nRegistration successful\n"
+    echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> auth.log
+}
+
+edit_user () {
+    echo "Enter user email:"
+    read email
+
+    if ! grep -q "^$email:.*:.*:.*:.*" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        echo "Enter new username:"
+        read new_usr
+
+        echo "Enter new security question:"
+        read new_sec_q
+
+        echo "Enter new security answer:"
+        read new_sec_a
+
+        echo "Enter new password:"
+        read -s new_pass
         
-        echo "Enter the answer to your security question:"
-        read sec_a
+        newenc_pass=$(echo $new_pass | base64)
 
-        echo "Enter user password:"
-        read -s pass
+        # replace the existing line with the new values
+        sed -i "/^$email:/c\\$email:$new_usr:$new_sec_q:$new_sec_a:$newenc_pass" users.txt
+        echo -e "\nEdit successful\n"
+    fi
+}
 
-        enc_pass=$(echo $pass | base64)
+delete_user () {
+    echo "Enter user email:"
+    read email
 
-        echo "$email:$usr:$sec_q:$sec_a:$enc_pass" >>users.txt
-        echo -e "\nRegistration successful\n"
-        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER SUCCESS] user [$usr] registered successfully" >> auth.log
-    }
+    if ! grep -q "^$email:" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        # delete the line
+        sed -i "/^$email:/d" users.txt
+        echo -e "\nDelete successful\n"
+    fi
+}
 
-    edit_user () {
-        echo "Enter user email:"
-        read email
-
-        if ! grep -q "^$email:.*:.*:.*:.*" users.txt;
-        then
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            echo "Enter new username:"
-            read new_usr
-
-            echo "Enter new security question:"
-            read new_sec_q
-
-            echo "Enter new security answer:"
-            read new_sec_a
-
-            echo "Enter new password:"
-            read -s new_pass
-            
-            newenc_pass=$(echo $new_pass | base64)
-
-            # replace the existing line with the new values
-            sed -i "/^$email:/c\\$email:$new_usr:$new_sec_q:$new_sec_a:$newenc_pass" users.txt
-            echo -e "\nEdit successful\n"
-        fi
-    }
-
-    delete_user () {
-        echo "Enter user email:"
-        read email
-
-        if ! grep -q "^$email:" users.txt;
-        then
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            # delete the line
-            sed -i "/^$email:/d" users.txt
-            echo -e "\nDelete successful\n"
-        fi
-    }
-
-    admin () {
-        echo "Welcome! You currently have admin privileges."
-        while true; do
-            echo "Admin Menu"
-            echo "1. Add User"
-            echo "2. Edit User"
-            echo "3. Delete User"
-            echo -e "4. Exit \n"
-            
-            echo "Choose an option: "
-            read choice
-
-            case $choice in
-            1) add_user ;;
-            2) edit_user ;;
-            3) delete_user ;;
-            4) 
-                echo "Exiting..."
-                break
-                ;;
-            *) echo "Invalid choice" ;;
-            esac
-        done
-    }
-
-    member () {
-        echo "Welcome! You currently have member privileges."
-    }
-
-    ask_login () {
-        echo "Enter your email:"
-        read email
-
-        if ! grep -q "^$email:" users.txt;
-        then    
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            echo "Enter password:"
-            read -s pass
-
-            usr=$(grep "^$email:" users.txt | cut -d':' -f2)
-            enc_pass=$(echo $pass | base64)
-
-            if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
-            then    
-                echo -e "\nLogin successful\n"
-                echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN SUCCESS] user [$usr] logged in successfully" >> auth.log
-                admin
-            elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
-            then
-                echo -e "\nLogin successful\n"
-                echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN SUCCESS] user [$usr] logged in successfully" >> auth.log
-                member
-            else
-                echo -e "\nPassword is incorrect. Please enter the correct password."
-                echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN FAILED] ERROR Failed login attempt on user with email [$email]" >> auth.log
-                return 1  
-            fi
-        fi
-    }
-
-    ask_forgot () {
-        echo "Enter your email:"
-        read email
-
-        if ! grep -q "^$email:" users.txt;
-        then
-            echo -e "\nEmail not found. Please enter a valid email."
-            return 1
-        else
-            # grep the correct sec_q and _a from email
-            sec_q=$(grep "^$email:" users.txt | cut -d':' -f3)
-            echo "Security question: $sec_q"
-
-            echo "Enter your answer:"
-            read sec_a
-
-            if ! grep -q "^$email:.*:.*:$sec_a" users.txt;
-            then
-                echo -e "\nAnswer is incorrect. Please enter the correct answer."
-                return 1
-            else
-                enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
-                pass = $(echo $enc_pass | base64 -d)
-                echo -e "\nYour password is: $pass\n"
-                
-                # Extra mechanism for a new password
-                # echo "Enter new password:"  
-                # read -s new_pass
-                # enc_pass=$(echo $new_pass | base64)
-
-                # # echo "$email:$new_pass" >>users.txt
-                # sed -i "/^$email:/ s/^\([^:]*\):\([^:]*\):\([^:]*\):\([^:]*\):[^:]*$/\1:\2:\3:\4:$enc_pass/" users.txt
-                # echo -e "\nPassword reset successful\n"
-            fi
-        fi
-    }
-
-    welcome () {
-        echo "Welcome to the login page. Please select an option:"
-        echo "1. Login"
-        echo "2. Forgot Password"
+admin () {
+    echo "Welcome! You currently have admin privileges."
+    while true; do
+        echo "Admin Menu"
+        echo "1. Add User"
+        echo "2. Edit User"
+        echo "3. Delete User"
+        echo -e "4. Exit \n"
+        
         echo "Choose an option: "
         read choice
 
         case $choice in
-        1) ask_login ;;
-        2) ask_forgot ;;
+        1) add_user ;;
+        2) edit_user ;;
+        3) delete_user ;;
+        4) 
+            echo "Exiting..."
+            break
+            ;;
         *) echo "Invalid choice" ;;
         esac
-    }
+    done
+}
 
-    welcome
-    ```
+member () {
+    echo "Welcome! You currently have member privileges."
+}
+
+ask_login () {
+    echo "Enter your email:"
+    read email
+
+    if ! grep -q "^$email:" users.txt;
+    then    
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        echo "Enter password:"
+        read -s pass
+
+        usr=$(grep "^$email:" users.txt | cut -d':' -f2)
+        enc_pass=$(echo $pass | base64)
+
+        if grep -q "^$email:.*:.*:.*:$enc_pass" users.txt && [[ $email == *"admin"* ]]
+        then    
+            echo -e "\nLogin successful\n"
+            echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN SUCCESS] user [$usr] logged in successfully" >> auth.log
+            admin
+        elif grep -q "^$email:.*:.*:.*:$enc_pass" users.txt;
+        then
+            echo -e "\nLogin successful\n"
+            echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN SUCCESS] user [$usr] logged in successfully" >> auth.log
+            member
+        else
+            echo -e "\nPassword is incorrect. Please enter the correct password."
+            echo "$(date '+[%d/%m/%y %H:%M:%S]') [LOGIN FAILED] ERROR Failed login attempt on user with email [$email]" >> auth.log
+            return 1  
+        fi
+    fi
+}
+
+ask_forgot () {
+    echo "Enter your email:"
+    read email
+
+    if ! grep -q "^$email:" users.txt;
+    then
+        echo -e "\nEmail not found. Please enter a valid email."
+        return 1
+    else
+        # grep the correct sec_q and _a from email
+        sec_q=$(grep "^$email:" users.txt | cut -d':' -f3)
+        echo "Security question: $sec_q"
+
+        echo "Enter your answer:"
+        read sec_a
+
+        if ! grep -q "^$email:.*:.*:$sec_a" users.txt;
+        then
+            echo -e "\nAnswer is incorrect. Please enter the correct answer."
+            return 1
+        else
+            enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
+            pass = $(echo $enc_pass | base64 -d)
+            echo -e "\nYour password is: $pass\n"
+            
+            # Extra mechanism for a new password
+            # echo "Enter new password:"  
+            # read -s new_pass
+            # enc_pass=$(echo $new_pass | base64)
+
+            # # echo "$email:$new_pass" >>users.txt
+            # sed -i "/^$email:/ s/^\([^:]*\):\([^:]*\):\([^:]*\):\([^:]*\):[^:]*$/\1:\2:\3:\4:$enc_pass/" users.txt
+            # echo -e "\nPassword reset successful\n"
+        fi
+    fi
+}
+
+welcome () {
+    echo "Welcome to the login page. Please select an option:"
+    echo "1. Login"
+    echo "2. Forgot Password"
+    echo "Choose an option: "
+    read choice
+
+    case $choice in
+    1) ask_login ;;
+    2) ask_forgot ;;
+    *) echo "Invalid choice" ;;
+    esac
+}
+
+welcome
+```
 ---
 
 # Soal 3
