@@ -21,14 +21,9 @@ echo "=== Customer with the Most Sales ==="
 awk -F, '{print $17, $6}' sandbox.csv | sort -nr | head -n 1 | awk '{print $2, $3}'
 echo -e "\n"
 
-# Customer with the Least Profit
-echo "=== Customer with the Least Profit ==="
-awk -F, '{print $20, $6}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
-echo -e "\n"
-
-# Customer with the Most Profit
-echo "=== Customer with the Most Profit ==="
-awk -F, '{print $20, $6}' sandbox.csv | sort -nr | head -n 1 | awk '{print $2, $3}'
+# Customer Segment with the Least Profit
+echo "=== Customer Segment with the Least Profit ==="
+awk -F, '{print $20, $7}' sandbox.csv | sort | head -n 1 | awk '{print $2, $3}'
 echo -e "\n"
 
 # Categories with the Most Total Profit
