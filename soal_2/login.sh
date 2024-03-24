@@ -9,6 +9,13 @@ add_user() {
         return 1
     fi
 
+    if [[ $email != "*@*.*" ]];
+    then
+        echo -e "\nEmail is invalid."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email is invalid": [$email]" >> auth.log
+        return 1
+    fi
+
     echo "Enter user username:"
     read usr
 
@@ -109,7 +116,7 @@ ask_login () {
     then    
         echo -e "\nEmail not found. Please enter a valid email."
         return 1
-    else
+    else    
         echo "Enter password:"
         read -s pass
 
@@ -156,7 +163,7 @@ ask_forgot () {
             return 1
         else
             enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
-            pass = $(echo $enc_pass | base64 -d)
+            pass=$(echo $enc_pass | base64 -d)
             echo -e "\nYour password is: $pass\n"
 
             # Extra mechanism for a new password

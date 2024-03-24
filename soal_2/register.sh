@@ -11,6 +11,13 @@ ask_register() {
         return 1
     fi
 
+    if [[ $email != "*@*.*" ]];
+    then
+        echo -e "\nEmail is invalid."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email is invalid": [$email]" >> auth.log
+        return 1
+    fi
+
     echo "Enter your username:"
     read usr
 
@@ -24,7 +31,8 @@ ask_register() {
     read -s pass
     while true; do
         # check more than 8 chars, has at least a capital and a normal letter, has at least a number
-        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
+        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; 
+        then
             echo "Password meets all requirements"
             break
         else

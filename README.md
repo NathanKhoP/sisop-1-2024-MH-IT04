@@ -378,7 +378,7 @@ ask_forgot () {
             return 1
         else
             enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
-            pass = $(echo $enc_pass | base64 -d)
+            pass=$(echo $enc_pass | base64 -d)
             echo -e "\nYour password is: $pass\n"
         fi
     fi
@@ -567,6 +567,13 @@ ask_register() {
         return 1
     fi
 
+    if [[ $email != "*@*.*" ]];
+    then
+        echo -e "\nEmail is invalid."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email is invalid": [$email]" >> auth.log
+        return 1
+    fi
+
     echo "Enter your username:"
     read usr
 
@@ -580,7 +587,8 @@ ask_register() {
     read -s pass
     while true; do
         # check more than 8 chars, has at least a capital and a normal letter, has at least a number
-        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; then
+        if [[ ${#pass} -ge 8 && "$pass" == *[[:lower:]]* && "$pass" == *[[:upper:]]* && "$pass" == *[0-9]* ]]; 
+        then
             echo "Password meets all requirements"
             break
         else
@@ -599,6 +607,12 @@ ask_register() {
 }
 
 ask_register
+
+
+# date + "%y/%m/%d %H:%M:%S"
+}
+
+ask_register
 ```
 
 **2. login.sh**
@@ -612,6 +626,13 @@ add_user() {
     then
         echo -e "\nEmail already exists. Please choose a different one."
         echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email already exists": [$email]" >> auth.log
+        return 1
+    fi
+
+    if [[ $email != "*@*.*" ]];
+    then
+        echo -e "\nEmail is invalid."
+        echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email is invalid": [$email]" >> auth.log
         return 1
     fi
 
@@ -715,7 +736,7 @@ ask_login () {
     then    
         echo -e "\nEmail not found. Please enter a valid email."
         return 1
-    else
+    else    
         echo "Enter password:"
         read -s pass
 
@@ -762,17 +783,8 @@ ask_forgot () {
             return 1
         else
             enc_pass=$(grep "^$email:" users.txt | cut -d':' -f5)
-            pass = $(echo $enc_pass | base64 -d)
+            pass=$(echo $enc_pass | base64 -d)
             echo -e "\nYour password is: $pass\n"
-            
-            # Extra mechanism for a new password
-            # echo "Enter new password:"  
-            # read -s new_pass
-            # enc_pass=$(echo $new_pass | base64)
-
-            # # echo "$email:$new_pass" >>users.txt
-            # sed -i "/^$email:/ s/^\([^:]*\):\([^:]*\):\([^:]*\):\([^:]*\):[^:]*$/\1:\2:\3:\4:$enc_pass/" users.txt
-            # echo -e "\nPassword reset successful\n"
         fi
     fi
 }
