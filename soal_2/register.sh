@@ -11,7 +11,7 @@ ask_register() {
         return 1
     fi
 
-    if [[ $email != "*@*.*" ]];
+    if [[ $email != *"@"*"."* ]];
     then
         echo -e "\nEmail is invalid."
         echo "$(date '+[%d/%m/%y %H:%M:%S]') [REGISTER FAILED] ERROR Failed register attempt with error: "Email is invalid": [$email]" >> auth.log
