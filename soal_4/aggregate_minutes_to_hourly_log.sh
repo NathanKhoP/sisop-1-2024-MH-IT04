@@ -4,7 +4,7 @@
 path_="/home/$(whoami)/log"
 cd "$path_"
 cur_time=$(date +"%Y%m%d%H")
-aggr_hour=$(date -d '-1 hour' +%H) # aggregate the hour before since this runs hourly based on the previous hours log
+aggr_hour=$(date -d '-1 hour' +%Y%m%d%H) # aggregate the hour before since this runs hourly based on the previous hours log
 
 # # crontab to run every hour
 # 0 * * * * "/home/etern1ty/sisop_works/modul_1/soal_4/aggregate_minutes_to_hourly_log.sh"
