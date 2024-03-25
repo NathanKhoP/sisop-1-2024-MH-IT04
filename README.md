@@ -817,7 +817,104 @@ welcome
 ### Deskripsi Soal
 Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Karena hobinya, dia ingin mengoleksi foto-foto karakter Genshin Impact. Suatu saat Yanuar memberikannya sebuah Link yang berisi koleksi kumpulan foto karakter dan sebuah clue yang mengarah ke penemuan gambar rahasia. Ternyata setiap nama file telah dienkripsi dengan menggunakan hexadecimal. Karena penasaran dengan apa yang dikatakan Yanuar, Alyss tidak menyerah dan mencoba untuk mengembalikan nama file tersebut kembali seperti semula.
 
-### Pengerjaan
+## Pengerjaan
+> Note:
+> - Unduh file koleksi karakter Genshin Impact dari URL yang diberikan
+> - Lakukan ekstraksi terhadap file yang telah diunduh
+> - Dekode nama file yang terenkripsi dengan hexadecimal
+> - Rename setiap file berdasarkan data karakter yang terdapat dalam file list_character.csv
+> - Hitung jumlah pengguna untuk setiap senjata yang ada
+> - Hapus file yang tidak diperlukan setelah proses selesai
+
+## Pembuatan awal.sh
+> 1.Unduh file dari URL yang diberikan
+```bash
+echo "=== Downloading files ==="
+wget -q -O genshin_character.zip "URL_Genshin_Character.zip"
+wget -q -O list_character.csv "URL_List_Character.csv"
+wget -q -O genshin.zip "URL_Genshin.zip"
+```
+>2.Ekstrak file yang telah diunduh
+```bash
+echo "=== Extracting files ==="
+unzip -q genshin_character.zip
+unzip -q genshin.zip
+```
+>3.Dekode nama file yang terenkripsi dengan hexadecimal
+```bash
+echo "=== Decoding filenames ==="
+for file in *.jpg; do
+    decoded_name=$(echo "$file" | xxd -r -p)
+    mv "$file" "$decoded_name"
+done
+```
+>4.Rename file berdasarkan data karakter dari list_character.csv
+```bash
+echo "=== Renaming files ==="
+while IFS=, read -r region nama elemen senjata; do
+    mv "$region"_"$nama"_"$elemen"_"$senjata".jpg "$region"_"$nama"_"$elemen"_"$senjata".jpg
+done < list_character.csv
+```
+>5.Hitung jumlah pengguna untuk setiap senjata
+```bash
+echo "=== Counting users for each weapon ==="
+declare -A weapon_count
+for file in *.jpg; do
+    senjata=$(echo "$file" | cut -d'_' -f4)
+    ((weapon_count[$senjata]++))
+done
+```
+>6.Tampilkan jumlah pengguna untuk setiap senjata
+```bash
+for senjata in "${!weapon_count[@]}"; do
+    echo "$senjata : ${weapon_count[$senjata]}"
+done
+```
+>7.Hapus file yang tidak diperlukan
+```bash
+echo "=== Removing unnecessary files ==="
+rm -f genshin_character.zip list_character.csv genshin.zip
+```
+
+## Pembuatan search.sh
+>1.Inisialisasi pencatatan log
+```bash
+log_file="image.log"
+touch "$log_file"
+```
+>2.Pencarian gambar tersembunyi
+```bash
+echo "=== Searching for hidden images ==="
+while true; do
+    for image in *.jpg; do
+        # Ekstrak nilai dari setiap gambar menggunakan steghide
+        extracted_txt=$(steghide extract -sf "$image" -p "" 2>/dev/null | grep "extracted")
+        if [[ -n "$extracted_txt" ]]; then
+            # Jika hasil ekstraksi adalah file txt yang dicari, simpan hasil dekripsi
+            # Jika bukan, hapus file txt tersebut
+            if [[ "$extracted_txt" == *"txt"* ]]; then
+                decrypted_content=$(xxd -r -p "$extracted_txt")
+                echo "$decrypted_content" > "$image.txt"
+                echo "$(date +'%d/%m/%y %H:%M:%S') [FOUND] $image" >> "$log_file"
+                # Temukan url yang dicari, dan hentikan script
+                if [[ "$decrypted_content" == *"URL_Yang_Dicari"* ]]; then
+                    echo "URL found: $decrypted_content"
+                    exit 0
+                fi
+            else
+                rm "$extracted_txt"
+            fi
+        fi
+    done
+    sleep 1
+done
+```
+
+## Hasil Akhir
+> Note:
+> - Pastikan kedua skrip memiliki izin eksekusi (chmod +x awal.sh search.sh).
+> - Jalankan skrip awal.sh dengan perintah ./awal.sh untuk memproses unduhan, ekstraksi, perubahan nama file, dan penghitungan senjata.
+> - Setelah itu, jalankan skrip search.sh dengan perintah ./search.sh untuk memulai pencarian gambar tersembunyi.
 
 
 # Soal 4
