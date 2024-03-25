@@ -1,3 +1,13 @@
+# Repository Praktikum Sistem Operasi Modul 1 - IT04
+
+## Anggota
+
+| Nama                      | NRP        |
+|---------------------------|------------|
+|Nathan Kho Pancras         | 5027231002 |
+|Athalla Barka Fadhil       | 5027231018 |
+|Muhammad Ida Bagus Rafi H  | 5027221059 |
+
 ## Daftar Isi
 
 - [Soal 1](#soal-1)
