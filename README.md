@@ -924,7 +924,8 @@ done
 Stitch sangat senang dengan PC di rumahnya. Suatu hari, PC nya secara tiba-tiba nge-freeze 🤯 Tentu saja, Stitch adalah seorang streamer yang harus setiap hari harus bermain game dan streaming.  Akhirnya, dia membawa PC nya ke tukang servis untuk diperbaiki. Setelah selesai diperbaiki, ternyata biaya perbaikan sangat mahal sehingga dia harus menggunakan uang hasil tabungan nya untuk membayarnya. Menurut tukang servis, masalahnya adalah pada CPU dan GPU yang overload karena gaming dan streaming sehingga mengakibatkan freeze pada PC nya. Agar masalah ini tidak terulang kembali, Stitch meminta kamu untuk membuat sebuah program monitoring resource yang tersedia pada komputer.
 Buatlah program monitoring resource pada PC kalian. Cukup monitoring ram dan monitoring size suatu directory. Untuk ram gunakan command `free -m`. Untuk disk gunakan command `du -sh <target_path>`. Catat semua metrics yang didapatkan dari hasil `free -m`. Untuk hasil `du -sh <target_path>` catat size dari path directory tersebut. Untuk target_path yang akan dimonitor adalah /home/{user}/. 
 
-### Pengerjaan
+Pengerjaan
+-
 
 > Note:
 > - Nama file untuk script per menit adalah minute_log.sh
@@ -940,102 +941,148 @@ Buatlah program monitoring resource pada PC kalian. Cukup monitoring ram dan mon
 >
 >> d. Karena file log bersifat sensitif pastikan semua file log hanya dapat dibaca oleh user pemilik file. 
 
-**Solusi**
-
 minute_log.sh
 -
    
-   Untuk hal yang pertama kali saya lakukan yaitu melakukan inisialisasi seperti berikut:
+Untuk hal yang pertama kali saya lakukan yaitu melakukan inisialisasi seperti berikut:
 
-   ```bash
-   path_="/home/$(whoami)"
-   log_path="$path_/log"
-   cur_time=$(date +"%Y%m%d%H%M%S")
+```bash
+path_="/home/$(whoami)"
+log_path="$path_/log"
+cur_time=$(date +"%Y%m%d%H%M%S")
 
-   cd "$path_"
-   ram_usage=$(free -m)
-   disk=$(du -sh $path_)
-   ```
+cd "$path_"
+ram_usage=$(free -m)
+disk=$(du -sh $path_)
+```
 
-   Saya membuat beberapa variabel, dengan keterangan sebagai berikut:
+Saya membuat beberapa variabel, dengan keterangan sebagai berikut:
 
-   - path_ : path untuk melakukan free -m
-   - log_path : path untuk menaruh file log
-   - cur_time : berisi date dengan format y/m/d h:m:s, jadi misal "20240326192420" pada 26 Maret 2024 pukul 19:24:20
-   - ram_usage : berisi hasil dari free -m
-   - disk : berisi hasil dari du -sh ke path_
+- path_ : path untuk melakukan free -m
+- log_path : path untuk menaruh file log
+- cur_time : berisi date dengan format y/m/d h:m:s, jadi misal "20240326192420" pada 26 Maret 2024 pukul 19:24:20
+- ram_usage : berisi hasil dari free -m
+- disk : berisi hasil dari du -sh ke path_
 
-    Kemudian saya menambah satu if else statement untuk membuat log_path jika belum ada.
+Kemudian saya menambah satu if else statement untuk membuat log_path jika belum ada.
 
-    ```bash
-    if [[ ! -d "$log_path" ]]; 
-    then
-        mkdir "$log_path"
-    fi
+```bash
+if [[ ! -d "$log_path" ]]; 
+then
+    mkdir "$log_path"
+fi
 
-    cd "$log_path"
-    ```
+cd "$log_path"
+```
 
-    Setelah itu, saya melakukan pengambilan value yang diinginkan dari variabel ram_usage dan disk dengan penggunaan cut dan echo ke variabel-variabel baru.
+Setelah itu, saya melakukan pengambilan value yang diinginkan dari variabel ram_usage dan disk dengan penggunaan cut dan echo ke variabel-variabel baru.
 
-    ```bash
-    mem_total=$(echo $ram_usage | cut -d ' ' -f8)
-    mem_used=$(echo $ram_usage | cut -d ' ' -f9)
-    mem_free=$(echo $ram_usage | cut -d ' ' -f10)
-    mem_shared=$(echo $ram_usage | cut -d ' ' -f11)
-    mem_buff=$(echo $ram_usage | cut -d ' ' -f12)
-    mem_available=$(echo $ram_usage | cut -d ' ' -f13)
+```bash
+mem_total=$(echo $ram_usage | cut -d ' ' -f8)
+mem_used=$(echo $ram_usage | cut -d ' ' -f9)
+mem_free=$(echo $ram_usage | cut -d ' ' -f10)
+mem_shared=$(echo $ram_usage | cut -d ' ' -f11)
+mem_buff=$(echo $ram_usage | cut -d ' ' -f12)
+mem_available=$(echo $ram_usage | cut -d ' ' -f13)
 
-    swap_total=$(echo $ram_usage | cut -d ' ' -f15) 
-    swap_used=$(echo $ram_usage | cut -d ' ' -f16)
-    swap_free=$(echo $ram_usage | cut -d ' ' -f17)
+swap_total=$(echo $ram_usage | cut -d ' ' -f15) 
+swap_used=$(echo $ram_usage | cut -d ' ' -f16)
+swap_free=$(echo $ram_usage | cut -d ' ' -f17)
 
-    path_size=$(echo $disk | cut -d ' ' -f1)
-    ```
+path_size=$(echo $disk | cut -d ' ' -f1)
+```
 
-    Saya pun memasukkan semua variabel yang berisi data yang diinginkan dari free -m dan melakukan echo ke metrics_$cur_time.log sesuai yang diminta soal.
+Saya pun memasukkan semua variabel yang berisi data yang diinginkan dari free -m dan melakukan echo ke metrics_$cur_time.log sesuai yang diminta soal.
 
-    ```bash
-    echo mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size >> "metrics_$cur_time.log"
+```bash
+echo mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size >> "metrics_$cur_time.log"
 
-    echo $mem_total,$mem_used,$mem_free,$mem_shared,$mem_buff,$mem_available,$swap_total,$swap_used,$swap_free,$path_/,$path_size >> "metrics_$cur_time.log"
-    ```
+echo $mem_total,$mem_used,$mem_free,$mem_shared,$mem_buff,$mem_available,$swap_total,$swap_used,$swap_free,$path_/,$path_size >> "metrics_$cur_time.log"
+```
 
-    Terakhir, saya mengubah permission agar log hanya dapat dibaca oleh pemilik file dengan chmod 600.
+Terakhir, saya mengubah permission agar log hanya dapat dibaca oleh pemilik file dengan chmod 600.
 
-    ```bash
-    chmod 600 "metrics_$cur_time.log"
-    ```
+```bash
+chmod 600 "metrics_$cur_time.log"
+```
 
 aggregate_minutes_to_hourly_log.sh
 -
 
-    ```bash
-    path_="/home/$(whoami)/log"
-    cd "$path_"
-    cur_time=$(date +"%Y%m%d%H")
-    aggr_hour=$(date -d '-1 hour' +%Y%m%d%H)
+Pertama saya melakukan inisialisasi beberapa variabel, sama seperti minute_log.sh.
 
-    find ! -name '*agg*' -name "metrics_*.log" -name "*$aggr_hour*" -exec awk -F "," 'END{log_=sprintf("numfmt --from=iec %s",$11);
-    log_ | getline fix_log; close(log_); print $0","  fix_log}' {} \; > tempaggr.txt
+```bash
+path_="/home/$(whoami)/log"
+cd "$path_"
+cur_time=$(date +"%Y%m%d%H")
+aggr_hour=$(date -d '-1 hour' +%Y%m%d%H)
+```
 
-    echo "type,mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "metrics_agg_$cur_time.log"
+Keterangan:
+path_ : lokasi log
+cur_time : sama seperti minute_log tetapi tidak ada minute dan second
+aggr_hour : date yang dikurangi 1 jam untuk melakukan aggregate pada data-data minute_log yang sudah ada dari 1 jam sebelum aggregate.
 
-    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = 999999} 
-    {for (i=1; i<=9; i++) if (NR==1 || $i < t[i]) t[i] = $i; if ($12 < t[12]) t[12] = $12} 
-    END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
-    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+Setelah itu, saya mengambil data-data metrics yang sudah digenerate oleh cron dan minute_log.sh dengan find dan awk untuk data disk.
 
-    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = -999999}
-    {for (i=1; i<=9; i++) if (NR==1 || $i > t[i]) t[i] = $i; if ($12 > t[12]) t[12] = $12} 
-    END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
-    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+```bash
+find ! -name '*agg*' -name "metrics_*.log" -name "*$aggr_hour*" -exec awk -F "," 'END{log_=sprintf("numfmt --from=iec %s",$11);
+log_ | getline fix_log; close(log_); print $0","  fix_log}' {} \; > tempaggr.txt
+```
 
-    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = 0; t[12] = 0} 
-    {for (i=1; i<=9; i++) t[i]+=$i; t[12]+=$12} 
-    END {for (i=1; i<=9; i++) printf t[i]/NR","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]/NR); disk | getline fixed; close(disk); print fixed}
-    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+Constraints:
 
-    chmod 600 $"metrics_agg_$cur_time.log"
-    rm tempaggr.txt
-    ```
+- name tidak mengandung agg
+- name mengandung metrics_(wildcard).log
+- name mengandung aggr_hour
+
+Awk digunakan untuk mengubah format data disk (path_size) dari minute_log dari iec ke integer agar bisa dilakukan operasi avg dengan penggunaan sprintf.
+
+Setelah itu, akan dilakukan proses aggregate mulai dari nilai minimum.
+
+```bash
+echo "type,mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "metrics_agg_$cur_time.log" # header
+
+awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = 999999} 
+{for (i=1; i<=9; i++) if (NR==1 || $i < t[i]) t[i] = $i; if ($12 < t[12]) t[12] = $12} 
+END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+```
+
+Penjelasan awk :
+- -F ",', field separator/delimiter yaitu ,
+- Blok BEGIN
+  
+  1. For loop pertama melakukan inisialisasi ke t[i] dari i = 1 sampai 9. Sedangkan t[12] merupakan kasus spesial sehingga perlu dilakukan inisialisasi ke nilai yang cukup besar agar bisa mengambil minimum.
+  2. For loop kedua melakukan comparison dengan awalnya NR==1 dan ($i < t[i]) untuk terus menerus mencari nilai minimum untuk setiap column. (tidak ada operasi yang berlangsung saat i == 10 && i == 11)
+
+- Setelah END, dilakukan printing untuk t[i] (i 1-9), $10 (disk), dan t[12]. Namum karena t[12] adalah kasus spesial dimana data awal memiliki format iec kita ubah lagi ke iec dengan cara yabng sama, hanya berbeda di --to-iec.
+- Input awk merupakan tempaggr.txt
+- Outputnya disimpan ke "metrics_agg_$cur_time.log" dengan paste -s -d ''
+ 
+Untuk awk nilai maximum hanya berbeda di tanda yang dipakai.
+
+```bash
+awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = -999999}
+{for (i=1; i<=9; i++) if (NR==1 || $i > t[i]) t[i] = $i; if ($12 > t[12]) t[12] = $12} 
+END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+```
+
+Untuk nilai average awk kembali digunakan, dengan workflow yang mirip dengan nilai min/max.
+
+Perbedaan utama terletak di for di blok BEGIN yang kedua, dimana for ini akan menambah semua data di column sesuai i kemudian dibagi dengan jumlah row.
+
+```bash
+awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = 0; t[12] = 0} 
+{for (i=1; i<=9; i++) t[i]+=$i; t[12]+=$12} 
+END {for (i=1; i<=9; i++) printf t[i]/NR","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]/NR); disk | getline fixed; close(disk); print fixed}
+' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+```
+
+Terakhir, sama seperti minute_log.sh kita mengubah permission di hasil aggregate dengan chmod 600 dan juga menghapus temp file yaitu tempaggr.txt.
+
+```bash
+chmod 600 $"metrics_agg_$cur_time.log"
+rm tempaggr.txt
+```
