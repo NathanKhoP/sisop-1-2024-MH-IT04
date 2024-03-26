@@ -942,7 +942,8 @@ Buatlah program monitoring resource pada PC kalian. Cukup monitoring ram dan mon
 
 **Solusi**
 
-1. minute_log.sh
+minute_log.sh
+-
    
    Untuk hal yang pertama kali saya lakukan yaitu melakukan inisialisasi seperti berikut:
 
@@ -1006,7 +1007,8 @@ Buatlah program monitoring resource pada PC kalian. Cukup monitoring ram dan mon
     chmod 600 "metrics_$cur_time.log"
     ```
 
-2. aggregate_minutes_to_hourly_log.sh
+aggregate_minutes_to_hourly_log.sh
+-
 
     ```bash
     path_="/home/$(whoami)/log"
