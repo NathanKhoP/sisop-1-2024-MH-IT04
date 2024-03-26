@@ -931,19 +931,109 @@ Buatlah program monitoring resource pada PC kalian. Cukup monitoring ram dan mon
 > - Nama file untuk script agregasi per jam adalah aggregate_minutes_to_hourly_log.sh
 > - Semua file log terletak di /home/{user}/log
 > - Semua konfigurasi cron dapat ditaruh di file skrip .sh nya masing-masing dalam bentuk comment
-
-> a. Masukkan semua metrics ke dalam suatu file log bernama metrics_{YmdHms}.log. {YmdHms} adalah waktu disaat file script bash kalian dijalankan. Misal dijalankan pada 2024-03-20 15:00:00, maka file log yang akan tergenerate adalah metrics_20240320150000.log. 
-
-**Solusi**
-
-> b. Script untuk mencatat metrics diatas diharapkan dapat berjalan otomatis pada setiap menit. 
-
-**Solusi**
-
-> c. Kemudian, buat satu script untuk membuat agregasi file log ke satuan jam. Script agregasi akan memiliki info dari file-file yang tergenerate tiap menit. Dalam hasil file agregasi tersebut, terdapat nilai minimum, maximum, dan rata-rata dari tiap-tiap metrics. File agregasi akan ditrigger untuk dijalankan setiap jam secara otomatis. Berikut contoh nama file hasil agregasi metrics_agg_2024032015.log dengan format metrics_agg_{YmdH}.log 
+> 
+>> a. Masukkan semua metrics ke dalam suatu file log bernama metrics_{YmdHms}.log. {YmdHms} adalah waktu disaat file script bash kalian dijalankan. Misal dijalankan pada 2024-03-20 15:00:00, maka file log yang akan tergenerate adalah metrics_20240320150000.log. 
+>
+>> b. Script untuk mencatat metrics diatas diharapkan dapat berjalan otomatis pada setiap menit. 
+>
+>> c. Kemudian, buat satu script untuk membuat agregasi file log ke satuan jam. Script agregasi akan memiliki info dari file-file yang tergenerate tiap menit. Dalam hasil file agregasi tersebut, terdapat nilai minimum, maximum, dan rata-rata dari tiap-tiap metrics. File agregasi akan ditrigger untuk dijalankan setiap jam secara otomatis. Berikut contoh nama file hasil agregasi metrics_agg_2024032015.log dengan format metrics_agg_{YmdH}.log 
+>
+>> d. Karena file log bersifat sensitif pastikan semua file log hanya dapat dibaca oleh user pemilik file. 
 
 **Solusi**
 
-> d. Karena file log bersifat sensitif pastikan semua file log hanya dapat dibaca oleh user pemilik file. 
+1. minute_log.sh
+   
+   Untuk hal yang pertama kali saya lakukan yaitu melakukan inisialisasi seperti berikut:
 
-**Solusi**
+   ```bash
+   path_="/home/$(whoami)"
+   log_path="$path_/log"
+   cur_time=$(date +"%Y%m%d%H%M%S")
+
+   cd "$path_"
+   ram_usage=$(free -m)
+   disk=$(du -sh $path_)
+   ```
+
+   Saya membuat beberapa variabel, dengan keterangan sebagai berikut:
+
+   - path_ : path untuk melakukan free -m
+   - log_path : path untuk menaruh file log
+   - cur_time : berisi date dengan format y/m/d h:m:s, jadi misal "20240326192420" pada 26 Maret 2024 pukul 19:24:20
+   - ram_usage : berisi hasil dari free -m
+   - disk : berisi hasil dari du -sh ke path_
+
+    Kemudian saya menambah satu if else statement untuk membuat log_path jika belum ada.
+
+    ```bash
+    if [[ ! -d "$log_path" ]]; 
+    then
+        mkdir "$log_path"
+    fi
+
+    cd "$log_path"
+    ```
+
+    Setelah itu, saya melakukan pengambilan value yang diinginkan dari variabel ram_usage dan disk dengan penggunaan cut dan echo ke variabel-variabel baru.
+
+    ```bash
+    mem_total=$(echo $ram_usage | cut -d ' ' -f8)
+    mem_used=$(echo $ram_usage | cut -d ' ' -f9)
+    mem_free=$(echo $ram_usage | cut -d ' ' -f10)
+    mem_shared=$(echo $ram_usage | cut -d ' ' -f11)
+    mem_buff=$(echo $ram_usage | cut -d ' ' -f12)
+    mem_available=$(echo $ram_usage | cut -d ' ' -f13)
+
+    swap_total=$(echo $ram_usage | cut -d ' ' -f15) 
+    swap_used=$(echo $ram_usage | cut -d ' ' -f16)
+    swap_free=$(echo $ram_usage | cut -d ' ' -f17)
+
+    path_size=$(echo $disk | cut -d ' ' -f1)
+    ```
+
+    Saya pun memasukkan semua variabel yang berisi data yang diinginkan dari free -m dan melakukan echo ke metrics_$cur_time.log sesuai yang diminta soal.
+
+    ```bash
+    echo mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size >> "metrics_$cur_time.log"
+
+    echo $mem_total,$mem_used,$mem_free,$mem_shared,$mem_buff,$mem_available,$swap_total,$swap_used,$swap_free,$path_/,$path_size >> "metrics_$cur_time.log"
+    ```
+
+    Terakhir, saya mengubah permission agar log hanya dapat dibaca oleh pemilik file dengan chmod 600.
+
+    ```bash
+    chmod 600 "metrics_$cur_time.log"
+    ```
+
+2. aggregate_minutes_to_hourly_log.sh
+
+    ```bash
+    path_="/home/$(whoami)/log"
+    cd "$path_"
+    cur_time=$(date +"%Y%m%d%H")
+    aggr_hour=$(date -d '-1 hour' +%Y%m%d%H)
+
+    find ! -name '*agg*' -name "metrics_*.log" -name "*$aggr_hour*" -exec awk -F "," 'END{log_=sprintf("numfmt --from=iec %s",$11);
+    log_ | getline fix_log; close(log_); print $0","  fix_log}' {} \; > tempaggr.txt
+
+    echo "type,mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "metrics_agg_$cur_time.log"
+
+    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = 999999} 
+    {for (i=1; i<=9; i++) if (NR==1 || $i < t[i]) t[i] = $i; if ($12 < t[12]) t[12] = $12} 
+    END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+
+    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = -999999}
+    {for (i=1; i<=9; i++) if (NR==1 || $i > t[i]) t[i] = $i; if ($12 > t[12]) t[12] = $12} 
+    END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+
+    awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = 0; t[12] = 0} 
+    {for (i=1; i<=9; i++) t[i]+=$i; t[12]+=$12} 
+    END {for (i=1; i<=9; i++) printf t[i]/NR","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]/NR); disk | getline fixed; close(disk); print fixed}
+    ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
+
+    chmod 600 $"metrics_agg_$cur_time.log"
+    rm tempaggr.txt
+    ```
