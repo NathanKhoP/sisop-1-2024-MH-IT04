@@ -816,6 +816,22 @@ welcome
 ```
 ---
 
+Output
+-
+
+### register.sh
+
+
+### login.sh
+
+
+### users.txt
+
+
+### auth.log
+
+
+
 # Soal 3
 
 ### Deskripsi Soal
@@ -1094,10 +1110,11 @@ rm tempaggr.txt
 Output
 -
 
-minute_log.sh
+### minute_log.sh
 
 ![min_log_image](assets/minlog.png) 
 
-aggregate_minutes_to_hourly_log.sh (mengambil data min_log yang ada 1 jam sebelumnya)
+### aggregate_minutes_to_hourly_log.sh 
+(mengambil data min_log yang ada 1 jam sebelumnya)
 
 ![aggr_image](assets/aggr.png) 
