@@ -820,16 +820,19 @@ Output
 -
 
 ### register.sh
-
+![register](assets/register.png)
 
 ### login.sh
-
+![login-part1](assets/login-1.png)
+![login-admin](assets/login-2.png)
+![login-admin2](assets/login-3.png)
+![login-admin3](assets/login-4.png)
 
 ### users.txt
-
+![usersfile](assets/users.png)
 
 ### auth.log
-
+![authfile](assets/auth.png)
 
 
 # Soal 3
