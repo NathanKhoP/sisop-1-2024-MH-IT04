@@ -139,13 +139,17 @@ echo -e "\n"
 2. `awk -F, '$6 ~ /Adriaens/ {print "Quantity: "$18}' sandbox.csv`
    - Sama seperti sebelumnya, namun kali ini kita mencetak jumlah pesanan (kolom ke-18) dari baris-baris yang dipilih.
 
+## Output
 
+sandbox.sh
+
+![sandbox_image](assets/sandbox.png)
 
 # Soal 2
 
 ### Deskripsi Soal
 
-Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lain untuk mengerjakan proyek bom atom nya, Oppie memiliki racikan bom atom rahasia yang hanya bisa diakses penelitinya yang akan diidentifikasi sebagai user, Oppie juga memiliki admin yang bertugas untuk memanajemen peneliti,  bantulah oppie untuk membuat program yang akan memudahkan tugasnya 
+Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lain untuk mengerjakan proyek bom atom nya, Oppie memiliki racikan bom atom rahasia yang hanya bisa diakses penelitinya yang akan diidentifikasi sebagai user, Oppie juga memiliki admin yang bertugas untuk memanajemen peneliti, bantulah oppie untuk membuat program yang akan memudahkan tugasnya
 
 ### Pengerjaan
 
