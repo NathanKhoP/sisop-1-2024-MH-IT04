@@ -945,6 +945,15 @@ done
 > - Jalankan skrip awal.sh dengan perintah ./awal.sh untuk memproses unduhan, ekstraksi, perubahan nama file, dan penghitungan senjata.
 > - Setelah itu, jalankan skrip search.sh dengan perintah ./search.sh untuk memulai pencarian gambar tersembunyi.
 
+## output
+awal.sh
+
+![awal_image](assets/awal.png)
+
+search.sh
+![search_image](assets/search.png)
+
+
 
 # Soal 4
 
