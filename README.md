@@ -1086,3 +1086,14 @@ Terakhir, sama seperti minute_log.sh kita mengubah permission di hasil aggregate
 chmod 600 $"metrics_agg_$cur_time.log"
 rm tempaggr.txt
 ```
+
+Output
+-
+
+minute_log.sh
+
+![min_log_image](assets/minlog.png) 
+
+aggregate_minutes_to_hourly_log.sh (mengambil data min_log yang ada 1 jam sebelumnya)
+
+![aggr_image](assets/aggr.png) 
