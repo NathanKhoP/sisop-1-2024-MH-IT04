@@ -15,23 +15,23 @@ log_ | getline fix_log; close(log_); print $0","  fix_log}' {} \; > tempaggr.txt
 
 # make header
 echo "type,mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "metrics_agg_$cur_time.log"
- 
+
 # minimum values (set t[12] to a very big number)
 awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = 999999} 
 {for (i=1; i<=9; i++) if (NR==1 || $i < t[i]) t[i] = $i; if ($12 < t[12]) t[12] = $12} 
-END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+END {printf "minimum,"; for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
 ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
 
 # maximum values (set t[12] to a very small number)
 awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = ""; t[12] = -999999}
 {for (i=1; i<=9; i++) if (NR==1 || $i > t[i]) t[i] = $i; if ($12 > t[12]) t[12] = $12} 
-END {for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
+END {printf "maximum,"; for (i=1; i<=9; i++) printf t[i]","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]); disk | getline fixed; close(disk); print fixed}
 ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
 
 # average values
 awk -F "," 'BEGIN {for (i=1; i<=9; i++) t[i] = 0; t[12] = 0} 
 {for (i=1; i<=9; i++) t[i]+=$i; t[12]+=$12} 
-END {for (i=1; i<=9; i++) printf t[i]/NR","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]/NR); disk | getline fixed; close(disk); print fixed}
+END {printf "average,";  for (i=1; i<=9; i++) printf t[i]/NR","; printf $10","; disk=sprintf("numfmt --to=iec %d",t[12]/NR); disk | getline fixed; close(disk); print fixed}
 ' tempaggr.txt | paste -s -d '' >> "metrics_agg_$cur_time.log"
 
 # change perms
