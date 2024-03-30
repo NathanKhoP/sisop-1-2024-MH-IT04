@@ -17,6 +17,8 @@
 
 # Soal 1
 
+**Dikerjakan oleh: Athalla Barka Fadhil (5027231018)**
+
 ### Deskripsi Soal
 
 Cipung dan abe ingin mendirikan sebuah toko bernama “SandBox”, sedangkan kamu adalah manajer penjualan yang ditunjuk oleh Cipung dan Abe untuk melakukan pelaporan penjualan dan strategi penjualan kedepannya yang akan dilakukan.
@@ -146,6 +148,8 @@ sandbox.sh
 ![sandbox_image](assets/sandbox.png)
 
 # Soal 2
+
+**Dikerjakan oleh: Nathan Kho Pancras (5027231002)**
 
 ### Deskripsi Soal
 
@@ -837,6 +841,8 @@ Output
 
 # Soal 3
 
+**Dikerjakan oleh: Muhammad Ida Bagus Rafi H (5027221059)**
+
 ### Deskripsi Soal
 Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Karena hobinya, dia ingin mengoleksi foto-foto karakter Genshin Impact. Suatu saat Yanuar memberikannya sebuah Link yang berisi koleksi kumpulan foto karakter dan sebuah clue yang mengarah ke penemuan gambar rahasia. Ternyata setiap nama file telah dienkripsi dengan menggunakan hexadecimal. Karena penasaran dengan apa yang dikatakan Yanuar, Alyss tidak menyerah dan mencoba untuk mengembalikan nama file tersebut kembali seperti semula.
 
@@ -941,6 +947,8 @@ done
 
 
 # Soal 4
+
+**Dikerjakan oleh: Nathan Kho Pancras (5027231002)**
 
 ### Deskripsi Soal
 
